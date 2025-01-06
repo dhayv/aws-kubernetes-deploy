@@ -10,6 +10,7 @@ output "node_group_id" {
   value = aws_eks_node_group.main_node.id
 }
 
-output "launch_template_id" {
-  value = aws_launch_template.node_group_lt.id
+
+output "cluster_name" {
+  value = aws_eks_cluster.main.name
 }
