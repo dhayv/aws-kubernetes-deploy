@@ -12,8 +12,9 @@ resource "aws_eks_cluster" "main" {
     endpoint_private_access = true
     endpoint_public_access  = false
     subnet_ids = var.private_subnet_ids
-    security_group_ids = [var.eks_sg_id]
   }
+
+
 
   depends_on = [
     aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy,
@@ -33,9 +34,7 @@ resource "aws_eks_node_group" "main_node" {
     min_size     = 3
   }
 
-  remote_access {
-    source_security_group_ids = [ var.eks_sg_id ]
-  }
+
 
   instance_types = [ "t2.micro" ]
 
@@ -49,7 +48,7 @@ resource "aws_eks_node_group" "main_node" {
 
 
 resource "aws_iam_role" "node_group" {
-  name = "eks-cluster-role"
+  name = "eks-node-group-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
