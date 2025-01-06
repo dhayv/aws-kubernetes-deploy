@@ -4,7 +4,7 @@ resource "aws_security_group" "alb" {
   vpc_id = var.vpc_id
 
   tags = {
-    Name = "${var.project_name}-ec2-alb"
+    Name = "${var.project_name}-eks-alb"
   }
 
   lifecycle {
@@ -39,7 +39,7 @@ resource "aws_security_group_rule" "allow_alb" {
 }
 
 # Egress Rule: Allow EKS to outbound traffic
-resource "aws_security_group_rule" "allow_ec2_egress" {
+resource "aws_security_group_rule" "allow_eks_egress" {
   type = "egress"
   security_group_id = aws_security_group.eks.id
   from_port         = 0
