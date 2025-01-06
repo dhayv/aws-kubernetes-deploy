@@ -1,5 +1,6 @@
 variable "aws_profile" {
   type = string
+  default = " "
 }
 
 variable "aws_region" {
@@ -8,4 +9,5 @@ variable "aws_region" {
 
 variable "project_name" {
   type = string
+  default = "fastAPI-kube-app"
 }
