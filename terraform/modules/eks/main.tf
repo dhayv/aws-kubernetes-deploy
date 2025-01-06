@@ -20,20 +20,11 @@ resource "aws_eks_cluster" "main" {
   ]
 }
 
-resource "aws_launch_template" "node_group_lt" {
-  name = "eks-node-group"
-
-  network_interfaces {
-    security_groups = [var.eks_sg_id]
-  }
-
-  
-}
 
 resource "aws_eks_node_group" "main_node" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "fastAPI-node"
-  node_role_arn   = aws_iam_role.cluster.arn
+  node_role_arn   = aws_iam_role.node_group.arn
   subnet_ids      = var.private_subnet_ids
 
   scaling_config {
@@ -42,16 +33,11 @@ resource "aws_eks_node_group" "main_node" {
     min_size     = 3
   }
 
-  instance_types = "t2.micro"
-
-  update_config {
-    max_unavailable = 1
+  remote_access {
+    source_security_group_ids = [ var.eks_sg_id ]
   }
 
-  launch_template {
-    id      = aws_launch_template.node_group_lt.id
-    version = "$Latest"
-  }
+  instance_types = [ "t2.micro" ]
 
   depends_on = [
     aws_iam_role_policy_attachment.node_AmazonEKSWorkerNodePolicy,
