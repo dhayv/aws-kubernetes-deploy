@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 terraform {
   required_providers {
     aws = {
@@ -10,7 +12,7 @@ terraform {
 # Configure the AWS Provider
 provider "aws" {
   region  = var.aws_region
-  profile = var.aws_profile
+  profile = var.aws_profile # Use the 'aws_profile' variable to determine which AWS CLI profile to use
 }
 
 module "vpc" {
@@ -29,5 +31,8 @@ module "eks" {
   source             = "./modules/eks"
   private_subnet_ids = module.vpc.private_subnet_ids
   eks_sg_id          = module.security_group.eks_sg_id
+  account_id = data.aws_caller_identity.current.account_id
 }
+
+
 
