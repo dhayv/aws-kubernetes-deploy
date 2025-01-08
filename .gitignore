@@ -5,7 +5,7 @@ venv
 **/*.tfvars
 **/.terraform/*
 **/terraform.tfstate*
-.terraform
+*.terraform
 terraform.tfstate.backup
 *.tfstate
 *.tfstate.*
