@@ -1,5 +1,8 @@
+# - Ensure that the IAM role 'EC2RoleForSSM_EKS' exists and has the necessary permissions for SSM and EKS interactions.
+# - Replace 'var.private_subnet_ids' with your actual list of private subnet IDs, either by defining them in a variables.tf file or passing them as input variables.
+
 resource "aws_eks_cluster" "main" {
-  name = "fastAPI-cluster"
+  name = "fastAPI-cluster" # Name of the IAM role for the EKS cluster
 
   access_config {
     authentication_mode = "API"
@@ -12,7 +15,10 @@ resource "aws_eks_cluster" "main" {
     endpoint_private_access = true
     endpoint_public_access  = false
     subnet_ids = var.private_subnet_ids
+
   }
+
+  
 
 
 
@@ -45,7 +51,29 @@ resource "aws_eks_node_group" "main_node" {
   ]
 }
 
+# Data source to reference an existing IAM role for EC2 instances with SSM access
+data "aws_iam_role" "console_role" {
+  name = "EC2RoleForSSM_EKS"  # Replace with the name of your existing IAM role
+}
 
+
+resource "aws_eks_access_entry" "additional_access" {
+  cluster_name      = aws_eks_cluster.main.name
+  principal_arn     = data.aws_iam_role.console_role.arn
+  kubernetes_groups = ["eks-admin"]
+  type              = "STANDARD"
+  
+}
+
+resource "aws_eks_access_policy_association" "AdminPolicy" {
+  cluster_name  = aws_eks_cluster.main.name
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+  principal_arn = data.aws_iam_role.console_role.arn
+
+  access_scope {
+    type       = "cluster"
+  }
+}
 
 resource "aws_iam_role" "node_group" {
   name = "eks-node-group-role"
@@ -100,7 +128,8 @@ resource "aws_iam_role" "cluster" {
   })
 }
 
+# Attach the AmazonEKSClusterPolicy to the EKS Cluster Role
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy" # Managed policy for EKS cluster
   role       = aws_iam_role.cluster.name
 }
