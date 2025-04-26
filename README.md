@@ -1,6 +1,6 @@
 # Private EKS Cluster with SSM Access
 
-**[Read the full deployment guide here](https://dev.to/dhayv/)**
+**[Read the full deployment guide here](https://dev.to/dhayv/how-to-deploy-a-fastapi-app-to-azure-with-docker-acr-and-github-actions-30bk)**
 
 ## Overview
 
